@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+  <style>/* Reset default browser styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+    }
+    
+    h2 {
+        color: #007bff; /* Warna biru */
+        margin-bottom: 30px; /* Jarak bawah yang lebih besar */
+    }
+    
+    h3 {
+        color: #0056b3; /* Warna biru gelap */
+        margin-top: 20px;
+        margin-bottom: 15px; /* Jarak bawah yang lebih besar */
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 12px; /* Padding yang lebih besar untuk input */
+        margin: 10px 0; /* Jarak antar input */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+    }
+    
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+        border-color: #007bff; /* Warna biru saat fokus */
+        outline: none;
+    }
+    
+    button {
+        background-color: #007bff; /* Warna biru */
+        color: white;
+        border: none;
+        padding: 12px 20px; /* Padding yang lebih besar untuk tombol */
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px; /* Jarak atas tombol */
+    }
+    
+    button:hover {
+        background-color: #0056b3; /* Warna biru gelap saat hover */
+    }
+    
+    ul {
+        list-style-type: none;
+        margin-top: 10px;
+        padding: 0; /* Menghapus padding default pada ul */
+    }
+    
+    ul li {
+        background: white;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Responsiveness */
+    @media (max-width: 600px) {
+        input[type="text"],
+        input[type="password"],
+        button {
+            width: 100%;
+        }
+    }
+    
+    /* Tambahan untuk tampilan desktop */
+    @media (min-width: 601px) {
+        body {
+            max-width: 800px; /* Membatasi lebar maksimum untuk tampilan desktop */
+            margin: auto; /* Memusatkan konten */
+        }
+    
+        h2, h3 {
+            text-align: center; /* Memusatkan teks judul */
+        }
+    
+        input[type="text"],
+        input[type="password"],
+        button {
+            margin-bottom: 15px; /* Jarak bawah yang lebih besar untuk elemen */
+        }
+    }
+    body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+</style>
+</head>
+<body>
+    <h2>Admin Dashboard</h2>
+    <button onclick="logout()">Logout</button>
+    
+    <h3>Kelola Admin</h3>
+    <input type="text" id="new-admin" placeholder="Username Baru">
+    <input type="password" id="new-password" placeholder="Password Baru">
+    <button onclick="addAdmin()">Tambah Admin</button>
+    <ul id="admin-list"></ul>
+    
+    <h3>Kelola Link Beranda</h3>
+    <input type="text" id="link-name" placeholder="Nama Link">
+    <input type="text" id="link-url" placeholder="URL Link">
+    <button onclick="addLink()">Tambah Link</button>
+    <ul id="link-list"></ul>
+    
+    <script src="admin.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const admin = sessionStorage.getItem("admin");
+            if (!admin) {
+                alert("Anda harus login terlebih dahulu!");
+                window.location.href = "admin-login.html"; // Redirect ke halaman login
+            }
+        });
+    </script>
+    
+</body>
+</html>
