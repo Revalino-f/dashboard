@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    /* Styling dasar */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #ffffff; /* Latar belakang putih */
+      color: #0077B6; /* Teks berwarna biru laut */
+    }
+
+    h2 {
+      color: #0077B6; /* Warna biru laut */
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      color: #005f73; /* Biru lebih gelap untuk heading */
+      margin-top: 20px;
+    }
+
+    /* Styling tombol dan form */
+    button {
+      padding: 10px 20px;
+      background-color: #0077B6;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      width: 100%; /* Tombol akan penuh di mobile */
+      box-sizing: border-box;
+    }
+
+    button:hover {
+      background-color: #005f73;
+    }
+
+    /* Styling form input */
+    input[type="text"],
+    input[type="password"],
+    input[type="url"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #0077B6;
+      box-sizing: border-box;
+    }
+
+    /* Styling alert */
+    .alert {
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      color: white;
+      display: none;
+    }
+
+    .alert.success {
+      background-color: #4CAF50;
+    }
+
+    .alert.info {
+      background-color: #2196F3;
+    }
+
+    .alert.error {
+      background-color: #f44336;
+    }
+
+    /* Tabel Admin dan Link */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    /* Tabel Link */
+table td {
+  word-wrap: break-word; /* Membungkus kata yang terlalu panjang */
+  overflow-wrap: break-word; /* Untuk memastikan kata terpotong jika terlalu panjang */
+}
+
+table td:nth-child(2) {
+  max-width: 100px; /* Batas lebar untuk URL */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Menambahkan elipsis (...) jika teks terlalu panjang */
+}
+
+
+    table th,
+    table td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+
+    table th {
+      background-color: #0077B6;
+      color: white;
+    }
+
+    table tbody tr:nth-child(even) {
+      background-color: #e0f7fa;
+    }
+
+    table tbody tr:hover {
+      background-color: #b2ebf2;
+    }
+
+    /* Flexbox untuk memastikan elemen responsif */
+    form {
+      display: flex;
+      flex-direction: column;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      margin-bottom: 5px;
+      color: #0077B6;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      table th,
+      table td {
+        font-size: 14px;
+        padding: 8px;
+        
+      }
+
+      table {
+        font-size: 14px;
+      }
+
+      .form-group {
+        margin-bottom: 10px;
+      }
+
+      /* Tabel pada perangkat kecil */
+      table {
+        font-size: 12px;
+        margin-top: 10px;
+      }
+      
+
+      table td, table th {
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>Admin Dashboard</h2>
+  
+
+  <!-- Alert untuk pesan sukses atau error -->
+  <div id="alert" class="alert"></div>
+
+  <!-- Form untuk tambah admin -->
+  <h3>Manage Admin Users</h3>
+  <form id="addAdminForm">
+    <div class="form-group">
+      <label for="newUsername">Username:</label>
+      <input type="text" id="newUsername" required>
+    </div>
+
+    <div class="form-group">
+      <label for="newPassword">Password:</label>
+      <input type="password" id="newPassword" required>
+    </div>
+
+    <button type="submit">Tambah Admin</button>
+  </form>
+
+  <!-- Form untuk tambah link -->
+  <h3>Manage Links</h3>
+  <form id="addLinkForm">
+    <div class="form-group">
+      <label for="linkJudul">Judul Link:</label>
+      <input type="text" id="linkJudul" required>
+    </div>
+
+    <div class="form-group">
+      <label for="linkUrl">URL:</label>
+      <input type="url" id="linkUrl" required>
+    </div>
+
+    <button type="submit">Tambah Link</button>
+  </form>
+
+  <h3>Existing Admin Users</h3>
+  <table id="adminTable">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h3>Existing Links</h3>
+  <table id="linkTable">
+    <thead>
+      <tr >
+        <th>Judul</th>
+        <th>URL</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <br>
+  <button id="logoutBtn">Logout</button>
+
+  <!-- Muat Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+  window.location.href = 'index.html'; // jika belum login, kembali ke halaman login
+}
+
+    document.getElementById("logoutBtn").addEventListener("click", function() {
+  localStorage.removeItem("isLoggedIn");
+  window.location.href = "index.html"; // balik ke halaman login
+});
+
+    // Inisialisasi Supabase setelah library dimuat
+    const supabase = window.supabase.createClient(
+      'https://zkkdgqkbdxgnantxccko.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpra2RncWtiZHhnbmFudHhjY2tvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MjQyMzcsImV4cCI6MjA2MDEwMDIzN30.y0zeMT8CJNXI96BuxL7TmOCSbzEq3WNbJyaEgjCDBkU'
+    );
+  
+    document.addEventListener("DOMContentLoaded", async () => {
+      let { data: admins, error: adminError } = await supabase.from('admin').select('*');
+      let { data: links, error: linkError } = await supabase.from('link').select('*');
+  
+      if (adminError || linkError) {
+        displayAlert('Error loading data', 'error');
+        return;
+      }
+  
+      // Update tabel Admin
+      const updateAdminTable = () => {
+        const adminTable = document.getElementById("adminTable").getElementsByTagName("tbody")[0];
+        adminTable.innerHTML = '';
+        admins.forEach(admin => {
+          const row = adminTable.insertRow();
+          row.insertCell(0).innerText = admin.username;
+          row.insertCell(1).innerText = admin.password;
+          const deleteCell = row.insertCell(2);
+          deleteCell.innerHTML = `<button onclick="deleteAdmin(${admin.id})">Hapus</button>`;
+        });
+      };
+  
+      // Update tabel Link
+      const updateLinkTable = () => {
+        const linkTable = document.getElementById("linkTable").getElementsByTagName("tbody")[0];
+        linkTable.innerHTML = '';
+        links.forEach(link => {
+          const row = linkTable.insertRow();
+          row.insertCell(0).innerText = link.judul;
+          row.insertCell(1).innerText = link.link;
+          const deleteCell = row.insertCell(2);
+          deleteCell.innerHTML = `<button onclick="deleteLink(${link.id})">Hapus</button>`;
+        });
+      };
+  
+      // Fungsi untuk menampilkan alert
+      function displayAlert(message, type) {
+        const alertDiv = document.getElementById("alert");
+        alertDiv.innerHTML = message;
+        alertDiv.classList.add(type);  // Menambahkan kelas sesuai tipe (success, info, error)
+        alertDiv.style.display = 'block';
+        setTimeout(() => {
+          alertDiv.style.display = 'none';
+          alertDiv.classList.remove(type);  // Menghapus kelas setelah alert hilang
+        }, 3000);
+      }
+  
+      // Tambah Admin
+      document.getElementById("addAdminForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = document.getElementById("newUsername").value;
+        const password = document.getElementById("newPassword").value;
+  
+        if (!username || !password) {
+          displayAlert("Username and Password cannot be empty", 'error');
+          return;
+        }
+  
+        const { data, error } = await supabase.from('admin').insert([{ username, password }]);
+  
+        if (error) {
+          displayAlert("Error adding admin", 'error');
+        } else {
+          updateAdminTable();
+          displayAlert("Admin added successfully.", 'info');
+          // Refresh halaman setelah 2 detik
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        }
+      });
+  
+      // Tambah Link
+      document.getElementById("addLinkForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const judul = document.getElementById("linkJudul").value;
+        const link = document.getElementById("linkUrl").value;
+  
+        if (!judul || !link) {
+          displayAlert("Judul and Link cannot be empty", 'error');
+          return;
+        }
+  
+        const { data, error } = await supabase.from('link').insert([{ judul, link }]);
+  
+        if (error) {
+          displayAlert("Error adding link", 'error');
+        } else {
+          updateLinkTable();
+          displayAlert("Link added successfully.", 'info');
+          // Refresh halaman setelah 2 detik
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        }
+      });
+  
+      // Hapus Admin
+      window.deleteAdmin = async (id) => {
+        const { error } = await supabase.from('admin').delete().eq('id', id);
+  
+        if (error) {
+          displayAlert("Error deleting admin", 'error');
+        } else {
+          admins = admins.filter(admin => admin.id !== id);
+          updateAdminTable();
+          displayAlert("Admin deleted successfully.", 'info');
+        }
+      };
+  
+      // Hapus Link
+      window.deleteLink = async (id) => {
+        const { error } = await supabase.from('link').delete().eq('id', id);
+  
+        if (error) {
+          displayAlert("Error deleting link", 'error');
+        } else {
+          const index = links.findIndex(link => link.id === id);
+          if (index > -1) {
+            links.splice(index, 1);
+            updateLinkTable();
+            displayAlert("Link deleted successfully.", 'info');
+          }
+        }
+      };
+  
+      updateAdminTable();
+      updateLinkTable();
+    });
+  </script>
+</body>
+</html>
