@@ -31,6 +31,22 @@
     flex-direction: column;
     align-items: center;
   }
+  .btn-getstarted {
+  display: block;             /* Agar tombol tampil satu-satu ke bawah */
+  background-color: #007bff;  /* Warna biru */
+  color: white;               /* Teks putih */
+  padding: 10px 20px;         /* Spasi dalam tombol */
+  margin: 10px 0;             /* Jarak antar tombol */
+  text-align: center;         /* Teks di tengah */
+  text-decoration: none;      /* Hilangkan garis bawah */
+  border-radius: 5px;         /* Sudut melengkung */
+  transition: background-color 0.3s;
+}
+
+.btn-getstarted:hover {
+  background-color: #0056b3;  /* Warna biru lebih gelap saat hover */
+}
+
   </style>
 </head>
 
@@ -72,8 +88,16 @@
             <p>Silahkan pilih link sesuai kelas dan jangan sampai salah link!!</p>
           </div>
         </div>
-        <div id="buttons-container"></div>
-
+        <div>
+  <a class="btn-getstarted" href="http://103.158.163.218">XI1 - XI4</a>
+  <a class="btn-getstarted" href="http://103.158.163.217">XI5 - XI7</a>
+  <a class="btn-getstarted" href="http://103.158.163.216">XI8 - XI10</a>
+  <a class="btn-getstarted" href="http://103.158.163.215">X1 - X3</a>
+  <a class="btn-getstarted" href="http://103.158.163.214">X4 - X7</a>
+  <a class="btn-getstarted" href="http://103.158.163.213">X8 - X10</a>
+  <a class="btn-getstarted" href="http://103.158.163.212">X11 - X12 - XI-11</a>
+  <a class="btn-getstarted" href="http://103.158.163.219">Cadangan</a>
+</div>
         <div class="row gy-4 mt-5" id="about">
           <div class="col-md-6 col-lg-3" data-aos="zoom-out" data-aos-delay="100">
             <div class="icon-box">
@@ -188,6 +212,6 @@
     </section><!-- /Stats Section -->
         <div id="buttons-container"></div>
     </main>
-    <script src="script.js"></script>
+
 </body>
 </html>
