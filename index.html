@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Loading </title>
+<title>Loading & Navigation</title>
 <style>
   body, html {
     height: 100%;
@@ -100,8 +100,9 @@
 
     <button id="goButton">Masuk Halaman Sekolah</button>
   </div>
+
   <script>
-    const targetURL = 'https://103.158.163.218/';
+    const targetURL = 'https://103.158.163.218/dashboard';
     const fallbackURL = '404.html';
 
     // Stop animation after 2 seconds
@@ -122,23 +123,6 @@
       };
       img.src = targetURL + '/favicon.ico?' + new Date().getTime(); // Use favicon as test
     }, 2000);
-  </script>
-  
-
-  <script>
-  
-    const goButton = document.getElementById('goButton');
-    
-
-    // Setelah loading 3 detik, hentikan animasi loading tapi tombol tetap aktif
-    setTimeout(() => {
-      document.querySelector('.loading-text').style.animation = 'none';
-      
-    }, 3000);
-
-    goButton.addEventListener('click', () => {
-      window.location.href = 'https://103.158.163.218/dashboard/';
-    });
   </script>
 </body>
 </html>
