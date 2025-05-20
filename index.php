@@ -1,0 +1,272 @@
+
+<?php
+// Koneksi database
+$conn = new mysqli("localhost", "root", "", "dashboarddb");
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+
+$sql = "SELECT * FROM link";
+$result = $conn->query($sql);
+$totalLinks = $result ? $result->num_rows : 0;
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Sman 1 Porong</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="https://sman1porong.sch.id/userfiles/image/smanip%20transparant.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+  <style>#buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .btn-getstarted {
+  display: block;             /* Agar tombol tampil satu-satu ke bawah */
+  background-color:rgb(40, 132, 230);  /* Warna biru */
+  color: white;               /* Teks putih */
+  padding: 10px 20px;         /* Spasi dalam tombol */
+  margin: 10px 0;             /* Jarak antar tombol */
+  text-align: center;         /* Teks di tengah */
+  text-decoration: none;      /* Hilangkan garis bawah */
+  border-radius: 5px;         /* Sudut melengkung */
+  transition: background-color 0.3s;
+}
+
+.btn-getstarted:hover {
+  background-color: #0056b3;  /* Warna biru lebih gelap saat hover */
+}
+
+  </style>
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+      <a href="index.php" class="logo d-flex align-items-center me-auto">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        
+        <h1 class="sitename"><img src="https://sman1porong.sch.id/userfiles/image/smanip%20transparant.png" >Sman1p</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#hero" class="active">Home<br></a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#maps">Maps</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <a class="btn-getstarted" href="adms/admin-login.php">Admin Login</a>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section">
+
+  
+
+      <div class="container">
+        <div class="row justify-content-center" data-aos="zoom-out">
+          <div class="col-xl-7 col-lg-9 text-center">
+            <h1>Selamat datang di<br> Dashboard Ujian</h1>
+            <p>Silahkan pilih link sesuai kelas dan jangan sampai salah link!!</p>
+          </div>
+        </div>
+        <div id="buttons-container">
+<?php
+// koneksi ke database
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "dashboarddb";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
+}
+
+// query ambil semua data dari tabel link
+$sql = "SELECT judul, link FROM link";
+$result = $conn->query($sql);
+
+if ($result === false) {
+    echo "Error query: " . $conn->error;
+} else {
+    if ($result->num_rows > 0) {
+        // output data tombol
+        while($row = $result->fetch_assoc()) {
+            $url = htmlspecialchars($row['link']);
+            $title = htmlspecialchars($row['judul']);
+            // tanpa target="_blank" supaya buka di halaman yang sama
+            echo '<a class="btn-getstarted" href="' . $url . '">' . $title . '</a> ';
+        }
+    } else {
+        echo "Tidak ada data tombol.";
+    }
+}
+
+$conn->close();
+?>
+</div>
+
+        <div class="row gy-4 mt-5" id="about">
+          <div class="col-md-6 col-lg-3" data-aos="zoom-out" data-aos-delay="100">
+            <div class="icon-box">
+              <div class="icon"><i class="bi bi-easel"></i></div>
+              <h4 class="title"><a href="">CBT SMAN1P</a></h4>
+              <p class="description">Cbt smanip adalah sebuah sistem ujian berbasis online menggunakan smartphon atau komputer</p>
+            </div>
+          </div><!--End Icon Box -->
+
+          <div class="col-md-6 col-lg-3" data-aos="zoom-out" data-aos-delay="300">
+            <div class="icon-box">
+              <div class="icon"><i class="bi bi-geo-alt"></i></div>
+              <h4 class="title"><a href="">Sman 1 porong</a></h4>
+              <p class="description">Gondang Selatan, Juwetkenongo, Porong, Sidoarjo Regency, East Java</p>
+            </div>
+          </div><!--End Icon Box -->
+
+        </div>
+      </div>
+
+    </section><!-- /Hero Section -->
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Contact</h2>
+        <p>Anda dapat menghubungi kami dari informasi di bawah ini</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="mb-4" data-aos="fade-up" data-aos-delay="200" id="maps"> 
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.333906247723!2d112.6871952750025!3d-7.53851489247483!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7de42404665f9%3A0x136e23ac10955b76!2sSman%201%20Porong%2C%20Gondang%20Selatan%2C%20Juwetkenongo%2C%20Kec.%20Porong%2C%20Kabupaten%20Sidoarjo%2C%20Jawa%20Timur!5e0!3m2!1sen!2sid!4v1742707280877!5m2!1sen!2sid" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div><!-- End Google Maps -->
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4">
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-geo-alt flex-shrink-0"></i>
+              <div>
+                <h3>lokasi</h3>
+                <p>Gondang Selatan, Juwetkenongo, Porong, Sidoarjo Regency, East Java</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+              <i class="bi bi-telephone flex-shrink-0"></i>
+              <div>
+                <h3>Call Us</h3>
+                <p> (0343)856068,842032</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+              <i class="bi bi-envelope flex-shrink-0"></i>
+              <div>
+                <h3>Email Us</h3>
+                <p>sman.porong@yahoo.co.id</p>
+              </div>
+            </div><!-- End Info Item -->
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /Contact Section -->
+
+  </main>
+
+  <footer id="footer" class="footer light-background">
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Sman 1 porong</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you've purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+        Designed by <a href="https://bootstrapmade.com/">Repalco</a> Distributed by <a href=""> repalco
+      </div>
+    </div>
+  </footer>
+<script>let currentCount = <?php echo $totalLinks; ?>;
+
+async function checkLinksChange() {
+  try {
+    const response = await fetch('check_new_links.php', {cache: "no-store"});
+    const data = await response.json();
+
+    if (data.total !== currentCount) {
+      location.reload();
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+setInterval(checkLinksChange, 1000);
+</script>
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body>
+
+</html>
+
+    </section><!-- /Stats Section -->
+        <div id="buttons-container"></div>
+    </main>
+
+</body>
+</html>
