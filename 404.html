@@ -17,13 +17,17 @@
 
   <div class="text-center mb-6">
     <h1 class="text-6xl font-bold">404</h1>
-    <p class="text-xl">Halaman tidak ditemukan / Offline</p>
+    <p class="text-xl">Halaman tidak ditemukan</p>
     <p class="text-white/80">Main Snake dulu yuk! 🐍</p>
   </div>
 
   <canvas id="game" width="300" height="300" class="w-full max-w-xs shadow-lg"></canvas>
   <p id="score" class="mt-4 text-sm text-white/70">Skor: 0</p>
-  <a href="/" class="mt-6 inline-block bg-white text-[#03A9F4] px-5 py-2 rounded-full hover:opacity-80 transition">Kembali ke Beranda</a>
+
+  <div class="flex space-x-4 mt-6">
+    <a href="/" class="inline-block bg-white text-[#03A9F4] px-5 py-2 rounded-full hover:opacity-80 transition">Kembali ke Beranda</a>
+    <button id="restartBtn" class="bg-white text-[#03A9F4] px-5 py-2 rounded-full hover:opacity-80 transition">Restart Game</button>
+  </div>
 
   <!-- Tombol kontrol untuk HP -->
   <div class="mt-6 space-y-2 flex flex-col items-center">
@@ -42,13 +46,21 @@
     const rows = canvas.height / box;
     const cols = canvas.width / box;
 
-    let snake = [{ x: 5 * box, y: 5 * box }];
-    let food = {
-      x: Math.floor(Math.random() * cols) * box,
-      y: Math.floor(Math.random() * rows) * box,
-    };
-    let direction = "RIGHT";
-    let score = 0;
+    let snake, food, direction, score, game;
+
+    function initGame() {
+      snake = [{ x: 5 * box, y: 5 * box }];
+      food = {
+        x: Math.floor(Math.random() * cols) * box,
+        y: Math.floor(Math.random() * rows) * box,
+      };
+      direction = "RIGHT";
+      score = 0;
+      document.getElementById("score").textContent = "Skor: " + score;
+
+      if (game) clearInterval(game);
+      game = setInterval(draw, 150);
+    }
 
     function setDirection(dir) {
       if (dir === "UP" && direction !== "DOWN") direction = "UP";
@@ -82,6 +94,7 @@
       if (direction === "UP") head.y -= box;
       if (direction === "DOWN") head.y += box;
 
+      // Game over conditions
       if (
         head.x < 0 || head.x >= canvas.width ||
         head.y < 0 || head.y >= canvas.height ||
@@ -106,7 +119,37 @@
       document.getElementById("score").textContent = "Skor: " + score;
     }
 
-    let game = setInterval(draw, 150);
+    // Restart button listener
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      initGame();
+    });
+
+    // Mulai game pertama kali
+    initGame();
+
+    // ==== Pengecekan akses targetURL dari index.html, sesuaikan jika ingin pakai di sini ====
+
+    const targetURL = 'https://103.158.163.218/dashboard';
+    const fallbackURL = '404.html';
+
+    // Cek akses targetURL dengan loading favicon (cache buster)
+    function checkAccess() {
+      const img = new Image();
+      img.onload = () => {
+        // Bisa akses targetURL
+        console.log('Target URL reachable, redirecting...');
+        window.location.href = targetURL;
+      };
+      img.onerror = () => {
+        // Tidak bisa akses, tetap di halaman 404 ini
+        console.log('Target URL not reachable, tetap di halaman ini.');
+      };
+      img.src = targetURL + '/favicon.ico?' + new Date().getTime();
+    }
+
+    // Delay cek akses 2 detik setelah load
+    setTimeout(checkAccess, 2000);
+
   </script>
 
 </body>
