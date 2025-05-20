@@ -100,11 +100,33 @@
 
     <button id="goButton">Masuk Halaman Sekolah</button>
   </div>
+  <script>
+    const targetURL = 'https://103.158.163.218/';
+    const fallbackURL = '404.html';
+
+    // Stop animation after 2 seconds
+    setTimeout(() => {
+      document.querySelector('.loading-text').style.animation = 'none';
+    }, 2000);
+
+    // Try loading the page
+    setTimeout(() => {
+      const img = new Image();
+      img.onload = () => {
+        // If reachable, redirect
+        window.location.href = targetURL;
+      };
+      img.onerror = () => {
+        // If not reachable, redirect to fallback
+        window.location.href = fallbackURL;
+      };
+      img.src = targetURL + '/favicon.ico?' + new Date().getTime(); // Use favicon as test
+    }, 2000);
+  </script>
+  
 
   <script>
-    setTimeout(function(){
-      window.location.href = "https://103.158.163.218/dashboard/";
-    }, 3000);
+  
     const goButton = document.getElementById('goButton');
     
 
