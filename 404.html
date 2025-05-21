@@ -127,29 +127,27 @@
     // Mulai game pertama kali
     initGame();
 
-    // ==== Pengecekan akses targetURL dari index.html, sesuaikan jika ingin pakai di sini ====
+    // ==== Pengecekan akses targetURL dari index.html ====
+  const targetURL = 'https://103.158.163.218/dashboard/';
+  const fallbackURL = '404.html';
 
-    const targetURL = 'https://103.158.163.218/dashboard/';
-    const fallbackURL = '404.html';
-
-    // Cek akses targetURL dengan loading favicon (cache buster)
-    function checkAccess() {
-      const img = new Image();
-      img.onload = () => {
-        // Bisa akses targetURL
+  // Cek akses targetURL secara langsung
+  function checkAccess() {
+    fetch(targetURL, { method: 'HEAD', mode: 'no-cors' })
+      .then(() => {
+        // Meskipun tidak bisa cek status, jika server reachable akan redirect
         console.log('Target URL reachable, redirecting...');
         window.location.href = targetURL;
-      };
-      img.onerror = () => {
-        // Tidak bisa akses, tetap di halaman 404 ini
+      })
+      .catch(() => {
+        // Jika fetch gagal total (misalnya server mati), tetap di halaman fallback
         console.log('Target URL not reachable, tetap di halaman ini.');
-      };
-      img.src = targetURL + '/favicon.ico?' + new Date().getTime();
-    }
+        // window.location.href = fallbackURL; // aktifkan jika mau redirect otomatis ke fallback
+      });
+  }
 
-    // Delay cek akses 2 detik setelah load
-    setTimeout(checkAccess, 2000);
-
+  // Delay cek akses 2 detik setelah load
+  setTimeout(checkAccess, 2000);
   </script>
 
 </body>
