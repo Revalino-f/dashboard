@@ -98,31 +98,34 @@
     <div class="loading-text">Loading...</div>
     <div class="sub-text">Dibuat oleh tim IT SMANIP</div>
 
-    <button id="goButton">Masuk Halaman Sekolah</button>
+    <button id="goButton"> Masuk Halaman Sekolah</button>
   </div>
 
   <script>
-    const targetURL = 'https://103.158.163.218/dashboard/';
-    const fallbackURL = '404.html';
+  const targetURL = 'https://103.158.163.218/dashboard/';
+  const fallbackURL = '404.html';
 
-    // Stop animation after 2 seconds
-    setTimeout(() => {
-      document.querySelector('.loading-text').style.animation = 'none';
-    }, 2000);
+  // Stop animation after 2 detik (jika ada animasi loading)
+  setTimeout(() => {
+    const loadingText = document.querySelector('.loading-text');
+    if (loadingText) {
+      loadingText.style.animation = 'none';
+    }
+  }, 2000);
 
-    // Try loading the page
-    setTimeout(() => {
-      const img = new Image();
-      img.onload = () => {
-        // If reachable, redirect
+  // Coba akses langsung halaman utama, bukan favicon
+  setTimeout(() => {
+    fetch(targetURL, { method: 'HEAD', mode: 'no-cors' })
+      .then(() => {
+        // Jika berhasil (meskipun mode: 'no-cors' tidak bisa baca status), langsung redirect
         window.location.href = targetURL;
-      };
-      img.onerror = () => {
-        // If not reachable, redirect to fallback
+      })
+      .catch(() => {
+        // Jika gagal fetch, redirect ke fallback
         window.location.href = fallbackURL;
-      };
-      img.src = targetURL + '/favicon.ico?' + new Date().getTime(); // Use favicon as test
-    }, 2000);
-  </script>
+      });
+  }, 2000);
+</script>
+
 </body>
 </html>
