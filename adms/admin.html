@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard Admin</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0faff; padding: 20px; }
+    h2, h3 { color: #0077B6; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: white; }
+    th, td { border: 1px solid #0077B6; padding: 10px; text-align: left; }
+    th { background-color: #0077B6; color: white; }
+    tr:nth-child(even) { background-color: #e0f7ff; }
+    button { cursor: pointer; padding: 6px 12px; border: none; background: #0077B6; color: white; border-radius: 4px; }
+    button:hover { background: #005f73; }
+    .logout { float: right; background: #f44336; }
+    form.inline { display: inline; }
+    input[type=text], input[type=url], input[type=password] {
+      padding: 6px; width: 200px; margin-right: 10px; border: 1px solid #0077B6; border-radius: 4px;
+    }
+    .container {
+      max-width: 1000px; margin: 0 auto;
+    }
+    #message {
+      margin-bottom: 15px; padding: 10px; font-weight: bold;
+    }
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<button onclick="logout()" class="logout" style="padding:10px 20px; text-decoration:none; border:none; cursor:pointer;">Logout</button>
+<div class="container">
+  <h2>Selamat Datang, <span id="current-username">Admin</span>!</h2>
+
+  <div id="message"></div>
+
+  <!-- FORM TAMBAH LINK -->
+  <h3>Tambah Link</h3>
+  <form id="addLinkForm">
+    <input type="text" name="judul" placeholder="Judul" required />
+    <input type="url" name="link" placeholder="URL Link" required />
+    <button type="submit">Tambah Link</button>
+  </form>
+
+  <!-- DAFTAR LINK -->
+  <h3>Daftar Link</h3>
+  <div id="links-loading" class="hidden">Loading links...</div>
+  <table id="linksTable">
+    <thead>
+      <tr><th>ID</th><th>Judul</th><th>Link</th><th>Tanggal</th><th>Aksi</th></tr>
+    </thead>
+    <tbody id="links-tbody">
+      <!-- Data akan dimuat oleh JavaScript -->
+    </tbody>
+  </table>
+
+  <hr>
+
+  <!-- FORM TAMBAH ADMIN -->
+  <h3>Tambah Admin</h3>
+  <form id="addAdminForm">
+    <input type="text" name="username" placeholder="Username" required />
+    <input type="password" name="password" placeholder="Password" required />
+    <button type="submit">Tambah Admin</button>
+  </form>
+
+  <!-- DAFTAR ADMIN -->
+  <h3>Daftar Admin</h3>
+  <div id="admins-loading" class="hidden">Loading admins...</div>
+  <table id="adminsTable">
+    <thead>
+      <tr><th>ID</th><th>Username</th><th>Tanggal</th><th>Aksi</th></tr>
+    </thead>
+    <tbody id="admins-tbody">
+      <!-- Data akan dimuat oleh JavaScript -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Ganti dengan URL Apps Script Web App yang sudah di-deploy
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwp5YcOOgwdTT6RhCh5m69hLzKyTQSRmxZukOegr2Tt7huIvcIciH0tNXGE4_LRuxbBKQ/exec';
+  
+  const messageDiv = document.getElementById('message');
+  let sessionToken = localStorage.getItem('sessionToken');
+  let currentUsername = localStorage.getItem('currentUsername');
+
+  // Cek login status saat page load
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!sessionToken || !currentUsername) {
+      alert('Anda harus login terlebih dahulu');
+      window.location.href = 'admin-login.html';
+      return;
+    }
+    
+    // Tampilkan username
+    document.getElementById('current-username').textContent = currentUsername;
+    
+    // Load initial data
+    loadLinks();
+    loadAdmins();
+  });
+
+  // Fungsi untuk API request
+  async function apiRequest(action, data = {}) {
+    const formData = new FormData();
+    formData.append('action', action);
+    formData.append('sessionToken', sessionToken);
+    formData.append('currentUsername', currentUsername);
+    
+    Object.keys(data).forEach(key => {
+      formData.append(key, data[key]);
+    });
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      
+      if (!result.success && result.error === 'Unauthorized') {
+        alert('Session expired. Please login again.');
+        logout();
+        return null;
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('API Error:', error);
+      return { success: false, error: 'Network error' };
+    }
+  }
+
+  // Load Links
+  async function loadLinks() {
+    const loading = document.getElementById('links-loading');
+    const tbody = document.getElementById('links-tbody');
+    
+    loading.classList.remove('hidden');
+    
+    const result = await apiRequest('get_links');
+    
+    loading.classList.add('hidden');
+    
+    if (result && result.success) {
+      displayLinks(result.data);
+    } else {
+      showMessage(result?.error || 'Gagal memuat links', 'red');
+    }
+  }
+
+  // Display Links
+  function displayLinks(links) {
+    const tbody = document.getElementById('links-tbody');
+    let html = '';
+    
+    links.forEach(link => {
+      const createdAt = new Date(link.created_at).toLocaleString();
+      html += `
+        <tr data-id="${link.id}">
+          <td>${link.id}</td>
+          <td>${escapeHtml(link.judul)}</td>
+          <td><a href="${escapeHtml(link.link)}" target="_blank">${escapeHtml(link.link)}</a></td>
+          <td>${createdAt}</td>
+          <td>
+            <button class="deleteLinkBtn" onclick="deleteLink(${link.id})">Hapus</button>
+          </td>
+        </tr>
+      `;
+    });
+    
+    tbody.innerHTML = html;
+  }
+
+  // Load Admins
+  async function loadAdmins() {
+    const loading = document.getElementById('admins-loading');
+    const tbody = document.getElementById('admins-tbody');
+    
+    loading.classList.remove('hidden');
+    
+    const result = await apiRequest('get_admins');
+    
+    loading.classList.add('hidden');
+    
+    if (result && result.success) {
+      displayAdmins(result.data);
+    } else {
+      showMessage(result?.error || 'Gagal memuat admins', 'red');
+    }
+  }
+
+  // Display Admins
+  function displayAdmins(admins) {
+    const tbody = document.getElementById('admins-tbody');
+    let html = '';
+    
+    admins.forEach(admin => {
+      const createdAt = new Date(admin.created_at).toLocaleString();
+      const isCurrentUser = admin.username === currentUsername;
+      
+      html += `
+        <tr data-id="${admin.id}">
+          <td>${admin.id}</td>
+          <td>${escapeHtml(admin.username)}</td>
+          <td>${createdAt}</td>
+          <td>
+            ${!isCurrentUser ? 
+              `<button class="deleteAdminBtn" onclick="deleteAdmin(${admin.id})">Hapus</button>` : 
+              '<em>(Sedang login)</em>'
+            }
+          </td>
+        </tr>
+      `;
+    });
+    
+    tbody.innerHTML = html;
+  }
+
+  // Tambah Link
+  document.getElementById('addLinkForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adding...';
+    
+    const formData = new FormData(form);
+    const data = {
+      judul: formData.get('judul'),
+      link: formData.get('link')
+    };
+
+    const result = await apiRequest('add_link', data);
+
+    if (result && result.success) {
+      showMessage(result.message, 'green');
+      form.reset();
+      loadLinks(); // Reload links
+    } else {
+      showMessage(result?.error || 'Gagal menambah link', 'red');
+    }
+    
+    // Reset button
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Tambah Link';
+  });
+
+  // Hapus Link
+  async function deleteLink(id) {
+    if (!confirm('Yakin ingin menghapus link ini?')) return;
+    
+    const result = await apiRequest('delete_link', { id });
+
+    if (result && result.success) {
+      showMessage(result.message, 'green');
+      loadLinks(); // Reload links
+    } else {
+      showMessage(result?.error || 'Gagal menghapus link', 'red');
+    }
+  }
+
+  // Tambah Admin
+  document.getElementById('addAdminForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adding...';
+    
+    const formData = new FormData(form);
+    const data = {
+      username: formData.get('username'),
+      password: formData.get('password')
+    };
+
+    const result = await apiRequest('add_admin', data);
+
+    if (result && result.success) {
+      showMessage(result.message, 'green');
+      form.reset();
+      loadAdmins(); // Reload admins
+    } else {
+      showMessage(result?.error || 'Gagal menambah admin', 'red');
+    }
+    
+    // Reset button
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Tambah Admin';
+  });
+
+  // Hapus Admin
+  async function deleteAdmin(id) {
+    if (!confirm('Yakin ingin menghapus admin ini?')) return;
+    
+    const result = await apiRequest('delete_admin', { id });
+
+    if (result && result.success) {
+      showMessage(result.message, 'green');
+      loadAdmins(); // Reload admins
+    } else {
+      showMessage(result?.error || 'Gagal menghapus admin', 'red');
+    }
+  }
+
+  // Logout
+  function logout() {
+    if (confirm('Yakin ingin logout?')) {
+      localStorage.removeItem('sessionToken');
+      localStorage.removeItem('currentUsername');
+      localStorage.removeItem('isLoggedIn');
+      window.location.href = '../index.html';
+    }
+  }
+
+  // Show Message
+  function showMessage(msg, color = 'black') {
+    messageDiv.textContent = msg;
+    messageDiv.style.color = color;
+    setTimeout(() => messageDiv.textContent = '', 4000);
+  }
+
+  // Escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+</script>
+
+</body>
+</html>
