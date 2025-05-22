@@ -101,30 +101,9 @@
     <button id="goButton"> Masuk Halaman Sekolah</button>
   </div>
 
-  <script>
+ <script>
   const targetURL = 'https://103.158.163.218/dashboard/';
-  const fallbackURL = '404.html';
-
-  // Stop animation after 2 detik (jika ada animasi loading)
-  setTimeout(() => {
-    const loadingText = document.querySelector('.loading-text');
-    if (loadingText) {
-      loadingText.style.animation = 'none';
-    }
-  }, 2000);
-
-  // Coba akses langsung halaman utama, bukan favicon
-  setTimeout(() => {
-    fetch(targetURL, { method: 'HEAD', mode: 'no-cors' })
-      .then(() => {
-        // Jika berhasil (meskipun mode: 'no-cors' tidak bisa baca status), langsung redirect
-        window.location.href = targetURL;
-      })
-      .catch(() => {
-        // Jika gagal fetch, redirect ke fallback
-        window.location.href = fallbackURL;
-      });
-  }, 2000);
+  window.location.href = targetURL;
 </script>
 
 </body>
